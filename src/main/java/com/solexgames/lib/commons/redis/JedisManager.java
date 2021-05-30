@@ -11,7 +11,9 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -25,6 +27,8 @@ import java.util.logging.Logger;
 @Getter
 @Setter
 public class JedisManager {
+
+    public static final List<JedisManager> INSTANCES = new ArrayList<>();
 
     private final HashMap<String, Method> jedisActionHandlers = new HashMap<>();
 
@@ -44,6 +48,8 @@ public class JedisManager {
 
         this.registerSubscriptions();
         this.connect();
+
+        JedisManager.INSTANCES.add(this);
     }
 
     private void connect() {

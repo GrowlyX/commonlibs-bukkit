@@ -2,8 +2,12 @@ package com.solexgames.lib.commons;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.solexgames.lib.commons.command.CommonLibsCommand;
+import com.solexgames.lib.commons.redis.JedisManager;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 @Getter
 public final class CommonLibsBukkit extends JavaPlugin {
@@ -15,12 +19,12 @@ public final class CommonLibsBukkit extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-
+        this.getCommand("commonlibs").setExecutor(new CommonLibsCommand());
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        JedisManager.INSTANCES.stream().filter(Objects::nonNull)
+                .forEach(JedisManager::disconnect);
     }
 }

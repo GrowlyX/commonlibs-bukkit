@@ -4,3 +4,6 @@ main: com.solexgames.lib.commons.CommonLibsBukkit
 
 author: SolexGames
 website: https://www.solexgames.com
+
+commands:
+  commonlibs:
