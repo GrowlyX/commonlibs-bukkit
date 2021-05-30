@@ -1,6 +1,6 @@
 name: commonlibs-bukkit
 version: ${git.commit.id.abbrev}-devbuild
-main: com.solexgames.library.commons.CommonLibsBukkit
+main: com.solexgames.lib.commons.CommonLibsBukkit
 
 author: SolexGames
 website: https://www.solexgames.com
