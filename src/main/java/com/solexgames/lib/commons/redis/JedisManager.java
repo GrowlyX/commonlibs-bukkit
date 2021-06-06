@@ -46,7 +46,10 @@ public class JedisManager {
 
         this.jedisPool = new JedisPool(this.settings.getHostAddress(), this.settings.getPort());
 
-        this.registerSubscriptions();
+        if (this.jedisHandler != null) {
+            this.registerSubscriptions();
+        }
+
         this.connect();
 
         JedisManager.INSTANCES.add(this);
