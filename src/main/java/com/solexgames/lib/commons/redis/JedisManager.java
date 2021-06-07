@@ -48,9 +48,8 @@ public class JedisManager {
 
         if (this.jedisHandler != null) {
             this.registerSubscriptions();
+            this.connect();
         }
-
-        this.connect();
 
         JedisManager.INSTANCES.add(this);
     }
