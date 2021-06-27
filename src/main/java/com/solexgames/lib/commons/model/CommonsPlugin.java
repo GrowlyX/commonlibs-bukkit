@@ -1,13 +1,10 @@
 package com.solexgames.lib.commons.model;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import me.lucko.helper.plugin.ExtendedJavaPlugin;
 
 /**
  * @author GrowlyX
  * @since 6/11/2021
  */
 
-public abstract class CommonsPlugin extends JavaPlugin {
-
-    // TODO: 6/11/2021 do stuff 
-}
+public abstract class CommonsPlugin extends ExtendedJavaPlugin { }

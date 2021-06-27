@@ -1,10 +1,18 @@
 package com.solexgames.lib.commons.command;
 
 import com.solexgames.lib.commons.redis.JedisManager;
+import lombok.SneakyThrows;
+import me.lucko.helper.Services;
+import me.lucko.helper.hologram.Hologram;
+import me.lucko.helper.hologram.HologramFactory;
+import me.lucko.helper.serialize.Position;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import java.util.Collections;
 
 /**
  * @author GrowlyX
@@ -13,6 +21,7 @@ import org.bukkit.command.CommandSender;
 
 public class CommonLibsCommand implements CommandExecutor {
 
+    @SneakyThrows
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender.hasPermission("commons.command.commonlibs")) {
