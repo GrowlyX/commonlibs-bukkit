@@ -40,29 +40,31 @@ public class HologramManager {
     public CommonsHologram formHologram(String identifier, Position position, List<String> lines) {
         Preconditions.checkNotNull(identifier, "id");
 
-        final Hologram hologram = this.hologramFactory.newHologram(position, lines);
+        final CommonsHologram hologram = new CommonsHologram(this.hologramFactory.newHologram(position, lines));
+        hologram.getHologram().spawn();
 
-        return this.hologramMap.put(identifier, new CommonsHologram(hologram));
+        return this.hologramMap.put(identifier, hologram);
     }
 
     public void deleteIfPresent(String identifier) {
         Preconditions.checkNotNull(identifier, "id");
 
-        this.hologramMap.remove(identifier);
+        final CommonsHologram hologram = this.hologramMap.remove(identifier);
+
+        hologram.getHologram().despawn();
     }
 
     public void loadAllAsync() {
         final CompositeTerminable terminable = CompositeTerminable.create();
 
         Schedulers.async().run(() -> {
-            final FileConfiguration configuration = CommonLibsBukkit.getPlugin(CommonLibsBukkit.class).getConfig();
+            final FileConfiguration configuration = CommonLibsBukkit.getInstance().getConfig();
             final ConfigurationSection section = configuration.getConfigurationSection("holograms");
-            final JsonParser parser = new JsonParser();
 
             if (section != null) {
                 section.getKeys(false).forEach(identifier -> {
                     final String serialized = section.getString(identifier);
-                    final Hologram helperHologram = this.hologramFactory.deserialize(parser.parse(serialized));
+                    final Hologram helperHologram = this.hologramFactory.deserialize(JsonParser.parseString(serialized));
 
                     this.hologramMap.put(identifier, new CommonsHologram(helperHologram));
                 });
@@ -74,7 +76,7 @@ public class HologramManager {
 
     public void saveAllAsync() {
         final CompositeTerminable terminable = CompositeTerminable.create();
-        final CommonLibsBukkit commonLibsBukkit = CommonLibsBukkit.getPlugin(CommonLibsBukkit.class);
+        final CommonLibsBukkit commonLibsBukkit = CommonLibsBukkit.getInstance();
 
         Schedulers.async().run(() -> {
             final FileConfiguration configuration = commonLibsBukkit.getConfig();

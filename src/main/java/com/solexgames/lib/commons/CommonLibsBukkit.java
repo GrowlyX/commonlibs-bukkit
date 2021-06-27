@@ -19,10 +19,15 @@ public final class CommonLibsBukkit extends JavaPlugin {
             .setPrettyPrinting()
             .create();
 
+    @Getter
+    private static CommonLibsBukkit instance;
+
     private HologramManager hologramManager;
 
     @Override
     public void onEnable() {
+        instance = this;
+
         this.getCommand("commonlibs").setExecutor(new CommonLibsCommand());
 
         this.loadCommonsHolograms();
