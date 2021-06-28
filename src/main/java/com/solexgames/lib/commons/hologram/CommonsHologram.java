@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import me.lucko.helper.hologram.Hologram;
 import me.lucko.helper.serialize.Position;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -77,5 +78,9 @@ public class CommonsHologram {
         }
 
         return newList;
+    }
+
+    public Location getLocation() {
+        return this.position.toLocation();
     }
 }

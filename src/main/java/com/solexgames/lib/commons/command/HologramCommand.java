@@ -9,7 +9,6 @@ import com.solexgames.lib.commons.hologram.CommonsHologram;
 import com.solexgames.lib.commons.manager.HologramManager;
 import me.lucko.helper.serialize.Position;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -21,19 +20,19 @@ import java.util.List;
  * @since 6/26/2021
  */
 
-@CommandPermission("commons.command.hologram")
 @CommandAlias("hologram|commonsholograms|holo|holos")
+@CommandPermission("commons.command.hologram")
 public class HologramCommand extends BaseCommand {
 
-    private final List<String> defLines = Arrays.asList(
+    private final List<String> defaultLines = Arrays.asList(
             "&6&lCommonLibs Holograms",
             "&7use /holo to view line commands..."
     );
 
     @Default
     @HelpCommand
-    public void onHelp(CommandHelp commandHelp) {
-        commandHelp.showHelp();
+    public void onHelp(CommandHelp help) {
+        help.showHelp();
     }
 
     @Subcommand("create|add")
@@ -45,7 +44,7 @@ public class HologramCommand extends BaseCommand {
             throw new ConditionFailedException("A hologram by that name already exists.");
         }
 
-        final List<String> stringList = new ArrayList<>(lines.length > 0 ? Arrays.asList(lines) : this.defLines);
+        final List<String> stringList = new ArrayList<>(lines.length > 0 ? Arrays.asList(lines) : this.defaultLines);
 
         CommonLibsBukkit.getInstance().getHologramManager().formHologram(name, Position.of(player.getLocation()), stringList);
 
@@ -150,5 +149,18 @@ public class HologramCommand extends BaseCommand {
         }
 
         hologramManager.saveAllSync();
+    }
+
+    @Subcommand("tp|teleport")
+    @Description("Teleport to a hologram")
+    public void onTeleport(Player player, String name) {
+        final CommonsHologram hologram = CommonLibsBukkit.getInstance().getHologramManager().fetchHologram(name);
+
+        if (hologram == null) {
+            throw new ConditionFailedException("A hologram by that name does not exist.");
+        }
+
+        player.teleport(hologram.getLocation());
+        player.sendMessage(ChatColor.YELLOW + "Teleported you to the " + ChatColor.GOLD + hologram.getName() + ChatColor.YELLOW + " hologram.");
     }
 }
