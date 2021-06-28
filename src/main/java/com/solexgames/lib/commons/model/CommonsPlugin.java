@@ -1,6 +1,5 @@
 package com.solexgames.lib.commons.model;
 
-import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**

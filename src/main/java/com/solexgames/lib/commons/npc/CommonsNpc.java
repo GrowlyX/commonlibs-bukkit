@@ -1,7 +1,11 @@
 package com.solexgames.lib.commons.npc;
 
 import lombok.Data;
-import me.lucko.helper.npc.Npc;
+import net.jitse.npclib.api.NPC;
+import net.jitse.npclib.api.skin.Skin;
+import org.bukkit.entity.Player;
+
+import java.util.function.Consumer;
 
 /**
  * @author GrowlyX
@@ -11,7 +15,11 @@ import me.lucko.helper.npc.Npc;
 @Data
 public class CommonsNpc {
 
-    private final Npc npc;
-    private final String command;
+    private final NPC npc;
+
+    private final String callbackData;
+    private final CommonsNpcClickCallbackType callbackType;
+
+    private final Skin skin;
 
 }

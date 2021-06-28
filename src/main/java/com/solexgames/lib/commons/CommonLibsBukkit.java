@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.solexgames.lib.commons.command.CommonLibsCommand;
 import com.solexgames.lib.commons.command.HologramCommand;
+import com.solexgames.lib.commons.listener.NpcListener;
 import com.solexgames.lib.commons.manager.HologramManager;
+import com.solexgames.lib.commons.manager.NPCManager;
 import com.solexgames.lib.commons.redis.JedisManager;
 import lombok.Getter;
 import me.lucko.helper.hologram.BukkitHologramFactory;
@@ -28,15 +30,23 @@ public final class CommonLibsBukkit extends JavaPlugin {
     private static CommonLibsBukkit instance;
 
     private HologramManager hologramManager;
+    private NPCManager npcManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
         this.saveDefaultConfig();
+        this.loadCommonsServices();
         this.loadCommonsHolograms();
         this.loadCommonsNpcs();
         this.loadCommonsCommands();
+
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+    }
+
+    private void loadCommonsServices() {
+        Bukkit.getServicesManager().register(HologramFactory.class, new BukkitHologramFactory(), this, ServicePriority.High);
     }
 
     private void loadCommonsCommands() {
@@ -49,11 +59,14 @@ public final class CommonLibsBukkit extends JavaPlugin {
     }
 
     private void loadCommonsNpcs() {
+        this.npcManager = new NPCManager();
+        this.npcManager.saveNpcService(this.npcManager.loadNpcService(this));
+        this.npcManager.loadAllAsync();
+
+        this.getServer().getPluginManager().registerEvents(new NpcListener(), this);
     }
 
     private void loadCommonsHolograms() {
-        Bukkit.getServicesManager().register(HologramFactory.class, new BukkitHologramFactory(), this, ServicePriority.High);
-
         this.hologramManager = new HologramManager();
         this.hologramManager.saveHologramService(this.hologramManager.loadHologramService());
         this.hologramManager.loadAllAsync();

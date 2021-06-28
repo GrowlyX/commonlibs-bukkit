@@ -149,6 +149,7 @@ public class HologramCommand extends BaseCommand {
         }
 
         hologramManager.saveAllSync();
+        player.sendMessage(ChatColor.GREEN + "Saved all holograms.");
     }
 
     @Subcommand("tp|teleport")
