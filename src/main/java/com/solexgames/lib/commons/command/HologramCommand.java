@@ -28,7 +28,7 @@ public class HologramCommand extends BaseCommand {
 
     private final List<String> defaultLines = Arrays.asList(
             "&6&lCommonLibs Holograms",
-            "&7use /holo to view line commands..."
+            "&7Use /holo to view line commands..."
     );
 
     @Default

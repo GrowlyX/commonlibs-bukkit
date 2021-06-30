@@ -34,7 +34,7 @@ public class NpcCommand extends BaseCommand {
 
     private final List<String> defaultLines = Arrays.asList(
             "&6&lCommonLibs Npcs",
-            "&7use /npc to view line commands..."
+            "&7Use /npc to view line commands..."
     );
 
     @Default
@@ -88,7 +88,7 @@ public class NpcCommand extends BaseCommand {
     public Skin getDisguiseData(UUID uuid) {
         try {
             final URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.toString().replace("-", "") + "?unsigned=false");
-            final JsonObject json = new JsonParser().parse(new InputStreamReader(url.openStream())).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
+            final JsonObject json = JsonParser.parseReader(new InputStreamReader(url.openStream())).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
 
             final String skin = json.get("value").getAsString();
             final String signature = json.get("signature").getAsString();
@@ -102,7 +102,7 @@ public class NpcCommand extends BaseCommand {
     public UUID fetchUUID(String name) {
         try {
             final URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
-            final JsonObject json = new JsonParser().parse(new InputStreamReader(url.openStream())).getAsJsonObject();
+            final JsonObject json = JsonParser.parseReader(new InputStreamReader(url.openStream())).getAsJsonObject();
             final String uuid = json.get("id").toString().replace("\"", "");
 
             return this.formatUUID(uuid);
