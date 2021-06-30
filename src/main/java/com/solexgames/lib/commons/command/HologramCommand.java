@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.annotation.*;
 import com.solexgames.lib.commons.CommonLibsBukkit;
+import com.solexgames.lib.commons.command.annotation.Service;
 import com.solexgames.lib.commons.hologram.CommonsHologram;
 import com.solexgames.lib.commons.manager.HologramManager;
 import me.lucko.helper.serialize.Position;
@@ -20,6 +21,7 @@ import java.util.List;
  * @since 6/26/2021
  */
 
+@Service
 @CommandAlias("hologram|commonsholograms|holo|holos")
 @CommandPermission("commons.command.hologram")
 public class HologramCommand extends BaseCommand {

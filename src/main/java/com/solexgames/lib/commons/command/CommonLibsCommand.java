@@ -1,28 +1,24 @@
 package com.solexgames.lib.commons.command;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
+import com.solexgames.lib.commons.command.annotation.Service;
 import com.solexgames.lib.commons.redis.JedisManager;
-import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * @author GrowlyX
  * @since 5/30/2021
  */
 
-public class CommonLibsCommand implements CommandExecutor {
+@Service
+@CommandAlias("commonlibs|lib")
+public class CommonLibsCommand extends BaseCommand {
 
-    @SneakyThrows
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender.hasPermission("commons.command.commonlibs")) {
-            sender.sendMessage(ChatColor.RED + "This server is currently running " + ChatColor.YELLOW + JedisManager.INSTANCES.size() + ChatColor.RED + " instances.");
-        } else {
-            sender.sendMessage(ChatColor.RED + "I'm sorry, but you do not have permission to perform this command.");
-        }
-
-        return false;
+    @Default
+    public void onDefault(Player player) {
+        player.sendMessage(ChatColor.RED + "This server is currently running " + ChatColor.YELLOW + JedisManager.INSTANCES.size() + ChatColor.RED + " instances.");
     }
 }
