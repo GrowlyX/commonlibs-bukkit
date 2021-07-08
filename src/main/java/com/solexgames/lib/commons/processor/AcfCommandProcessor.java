@@ -1,14 +1,14 @@
 package com.solexgames.lib.commons.processor;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
-import com.solexgames.lib.commons.command.annotation.Service;
-import com.solexgames.lib.commons.util.BukkitUtil;
+import com.solexgames.lib.commons.command.context.CommonsPlayer;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import java.lang.annotation.Annotation;
-import java.util.Collection;
 
 /**
  * @author GrowlyX
@@ -19,21 +19,27 @@ public class AcfCommandProcessor extends PaperCommandManager {
 
     public AcfCommandProcessor(Plugin plugin) {
         super(plugin);
+
+        this.loadDefaultContexts();
     }
 
-    public void scanAndRegisterCommands(String pkg) {
-        final Collection<Class<?>> classCollection = BukkitUtil.getClassesInPackage(this.plugin, pkg);
+    private void loadDefaultContexts() {
+        this.enableUnstableAPI("help");
+        this.getCommandContexts().registerContext(CommonsPlayer.class, context -> {
+            final String username = context.getFirstArg().replace(":confirm", "");
+            final Player bukkitPlayer = Bukkit.getPlayer(username);
 
-        classCollection.forEach(clazz -> {
-            if (!clazz.isAnnotationPresent(Service.class)) {
-                return;
+            if (bukkitPlayer.hasMetadata("vanished")) {
+                if (!context.getSender().hasPermission("scandium.staff")) {
+                    throw new ConditionFailedException("No player matching " + ChatColor.YELLOW + username + ChatColor.RED + " is online.");
+                } else {
+                    if (!context.getFirstArg().endsWith(":confirm")) {
+                        throw new ConditionFailedException("That player's vanished, please add :confirm to the end of the user's name to confirm this action.");
+                    }
+                }
             }
 
-            final Service service = clazz.getAnnotation(Service.class);
-
-            if (service.active()) {
-                this.registerCommand(clazz);
-            }
+            return new CommonsPlayer(bukkitPlayer);
         });
     }
 
