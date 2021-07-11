@@ -6,3 +6,4 @@ author: SolexGames
 website: https://www.solexgames.com
 
 depend: [ProtocolLib]
+loadbefore: [Neon]
