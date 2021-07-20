@@ -1,11 +1,13 @@
 package com.solexgames.lib.commons.redis;
 
 import com.solexgames.lib.commons.redis.annotation.Subscription;
+import com.solexgames.lib.commons.redis.callback.Callback;
 import com.solexgames.lib.commons.redis.exception.InvalidSubscriptionException;
 import com.solexgames.lib.commons.redis.handler.JedisHandler;
 import com.solexgames.lib.commons.redis.json.JsonAppender;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
@@ -101,9 +103,19 @@ public class JedisManager {
     }
 
     public void publish(String json) {
-        try (final Jedis jedis = this.jedisPool.getResource()) {
-            this.authenticate(jedis);
+        this.runCommand(jedis -> {
             jedis.publish(this.channel, json);
+        });
+    }
+
+    @SneakyThrows
+    public void runCommand(Callback<Jedis> jedisTCallback) {
+        try (final Jedis jedis = this.jedisPool.getResource()) {
+            if (this.settings.isAuth()) {
+                jedis.auth(this.settings.getPassword());
+            }
+
+            jedisTCallback.call(jedis);
         }
     }
 

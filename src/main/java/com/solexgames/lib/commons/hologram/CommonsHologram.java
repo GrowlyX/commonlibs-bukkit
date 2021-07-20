@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.lucko.helper.hologram.Hologram;
+import me.lucko.helper.scheduler.threadlock.ServerThreadLock;
 import me.lucko.helper.serialize.Position;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -66,8 +67,12 @@ public class CommonsHologram {
     private void updateLines() {
         this.hologram.updateLines(this.translate(this.lines));
 
-        this.remove();
-        this.spawn();
+        try (ServerThreadLock serverThreadLock = ServerThreadLock.obtain()) {
+            try {
+                this.remove();
+                this.spawn();
+            } catch (Exception ignored) { }
+        }
     }
 
     public List<String> translate(List<String> text) {

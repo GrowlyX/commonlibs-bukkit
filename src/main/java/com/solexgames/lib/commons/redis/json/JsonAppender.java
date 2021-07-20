@@ -1,4 +1,5 @@
 package com.solexgames.lib.commons.redis.json;
+
 import com.solexgames.lib.commons.CommonLibsBukkit;
 import lombok.Getter;
 
