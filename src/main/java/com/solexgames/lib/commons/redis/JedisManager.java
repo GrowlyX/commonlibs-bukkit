@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 /**
  * @author GrowlyX
  * @since 5/18/2021
- * <p>
- * Management for the jedis system
  */
 
 @Getter
@@ -60,23 +58,15 @@ public class JedisManager {
         this.jedisPubSub = new JedisSubscription(this);
 
         CompletableFuture.runAsync(() -> {
-            try (final Jedis jedis = this.jedisPool.getResource()) {
-                if (this.jedisPubSub != null) {
-                    this.authenticate(jedis);
-
-                    try {
-                        jedis.subscribe(this.jedisPubSub, this.channel);
-                    } finally {
-                        jedis.connect();
-                    }
-
-                    Logger.getGlobal().info("Now reading on jedis channel \"" + this.channel + "\"");
+            this.runCommand(jedis -> {
+                try {
+                    jedis.subscribe(this.jedisPubSub, this.channel);
+                } finally {
+                    jedis.connect();
                 }
-            } catch (Exception exception) {
-                exception.printStackTrace();
 
-                Logger.getGlobal().severe("Something went wrong while trying to subscribe to \"" + this.channel + "\".");
-            }
+                Logger.getGlobal().info("[Jedis] Now reading on jedis channel \"" + this.channel + "\"");
+            });
         });
     }
 
