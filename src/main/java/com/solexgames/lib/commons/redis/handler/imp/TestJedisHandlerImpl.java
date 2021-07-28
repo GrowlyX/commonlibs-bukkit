@@ -24,7 +24,7 @@ public class TestJedisHandlerImpl implements JedisHandler
                         6379, true,
                         "password"
                 ))
-                .withHandler(this)
+                .withHandlers(this)
                 .build();
     }
 

@@ -3,7 +3,9 @@ package com.solexgames.lib.commons.processor;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
+import com.solexgames.lib.commons.CommonLibsBukkit;
 import com.solexgames.lib.commons.command.context.CommonsPlayer;
+import com.solexgames.lib.commons.manager.HologramManager;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +27,7 @@ public class AcfCommandProcessor extends PaperCommandManager {
 
     private void loadDefaultContexts() {
         this.enableUnstableAPI("help");
+
         this.getCommandContexts().registerContext(CommonsPlayer.class, context -> {
             final String username = context.getFirstArg().replace(":confirm", "");
             final Player bukkitPlayer = Bukkit.getPlayer(username);
@@ -41,6 +44,13 @@ public class AcfCommandProcessor extends PaperCommandManager {
 
             return new CommonsPlayer(bukkitPlayer);
         });
+
+        this.setDefaultExceptionHandler((command, registeredCommand, sender, args, t) -> {
+            sender.sendMessage(ChatColor.RED + "Something went terrible wrong if this command just executed.");
+            return false;
+        });
+
+        this.registerDependency(HologramManager.class, CommonLibsBukkit.getInstance().getHologramManager());
     }
 
     @SneakyThrows

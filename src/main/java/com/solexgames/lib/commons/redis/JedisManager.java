@@ -14,6 +14,7 @@ import redis.clients.jedis.JedisPubSub;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -36,17 +37,17 @@ public class JedisManager {
     private final JedisSettings settings;
 
     private JedisPool jedisPool;
-    private JedisHandler jedisHandler;
+    private List<JedisHandler> jedisHandlers;
     private JedisPubSub jedisPubSub;
 
-    public JedisManager(String channel, JedisSettings settings, JedisHandler jedisHandler) throws InvalidSubscriptionException {
+    public JedisManager(String channel, JedisSettings settings, List<JedisHandler> jedisHandlers) {
         this.settings = settings;
         this.channel = channel;
-        this.jedisHandler = jedisHandler;
+        this.jedisHandlers = jedisHandlers;
 
         this.jedisPool = new JedisPool(this.settings.getHostAddress(), this.settings.getPort());
 
-        if (this.jedisHandler != null) {
+        if (this.jedisHandlers != null) {
             this.registerSubscriptions();
             this.connect();
         }
@@ -68,12 +69,6 @@ public class JedisManager {
                 Logger.getGlobal().info("[Jedis] Now reading on jedis channel \"" + this.channel + "\"");
             });
         });
-    }
-
-    public void authenticate(Jedis jedis) {
-        if (this.settings.isAuth()) {
-            jedis.auth(this.settings.getPassword());
-        }
     }
 
     public void disconnect() {
@@ -109,8 +104,13 @@ public class JedisManager {
         }
     }
 
-    public void registerSubscriptions() throws InvalidSubscriptionException {
-        final Method[] methodList = this.jedisHandler.getClass().getMethods();
+    public void registerSubscriptions() {
+        this.jedisHandlers.forEach(this::registerSubscription);
+    }
+
+    @SneakyThrows
+    private void registerSubscription(JedisHandler jedisHandler) {
+        final Method[] methodList = jedisHandler.getClass().getMethods();
 
         for (Method method : methodList) {
             if (method.isAnnotationPresent(Subscription.class)) {
