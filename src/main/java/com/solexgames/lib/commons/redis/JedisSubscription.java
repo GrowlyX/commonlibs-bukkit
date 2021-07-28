@@ -31,11 +31,15 @@ public class JedisSubscription extends JedisPubSub {
 
             if (method != null) {
                 try {
-                    method.invoke(this.jedisManager.getJedisHandler(), jsonAppender);
+                    method.invoke(this.jedisManager.getJedisHandlers().get(0) /* temporary */, jsonAppender);
                 } catch (Exception exception) {
-                    exception.printStackTrace();
+                    if (this.jedisManager.isPostExceptions()) {
+                        exception.printStackTrace();
 
-                    Logger.getGlobal().severe("Couldn't handle this packet: " + redisAction);
+                        Logger.getGlobal().severe("Couldn't handle this packet: " + redisAction);
+                    } else {
+                        this.jedisManager.getCollectedExceptions().add(exception);
+                    }
                 }
             } else {
                 Logger.getGlobal().severe("Couldn't handle this packet as a handler does not exist: " + redisAction);

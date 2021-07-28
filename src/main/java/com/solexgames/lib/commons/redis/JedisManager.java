@@ -40,10 +40,15 @@ public class JedisManager {
     private List<JedisHandler> jedisHandlers;
     private JedisPubSub jedisPubSub;
 
-    public JedisManager(String channel, JedisSettings settings, List<JedisHandler> jedisHandlers) {
+    private boolean postExceptions;
+
+    private final List<Exception> collectedExceptions = new ArrayList<>();
+
+    public JedisManager(String channel, JedisSettings settings, List<JedisHandler> jedisHandlers, boolean postExceptions) {
         this.settings = settings;
         this.channel = channel;
         this.jedisHandlers = jedisHandlers;
+        this.postExceptions = postExceptions;
 
         this.jedisPool = new JedisPool(this.settings.getHostAddress(), this.settings.getPort());
 
@@ -94,13 +99,13 @@ public class JedisManager {
     }
 
     @SneakyThrows
-    public void runCommand(Callback<Jedis> jedisTCallback) {
+    public void runCommand(Callback<Jedis> jedisCallback) {
         try (final Jedis jedis = this.jedisPool.getResource()) {
             if (this.settings.isAuth()) {
                 jedis.auth(this.settings.getPassword());
             }
 
-            jedisTCallback.call(jedis);
+            jedisCallback.call(jedis);
         }
     }
 
@@ -117,15 +122,15 @@ public class JedisManager {
                 final Subscription subscription = method.getAnnotation(Subscription.class);
 
                 if (method.getParameterTypes().length > 1) {
-                    throw new InvalidSubscriptionException("Handler has more than 1 parameter");
+                    throw new InvalidSubscriptionException("Handler has more than 1 parameter", method);
                 }
 
                 if (method.getParameterTypes()[0] != JsonAppender.class) {
-                    throw new InvalidSubscriptionException("Handler parameter is not JsonAppender");
+                    throw new InvalidSubscriptionException("Handler parameter is not JsonAppender", method);
                 }
 
                 if (!method.getName().startsWith("on")) {
-                    throw new InvalidSubscriptionException("Handler method does not match with naming conventions (on<incomingPacket>)");
+                    throw new InvalidSubscriptionException("Handler method does not match with naming conventions (on<incomingPacket>)", method);
                 }
 
                 this.jedisActionHandlers.put(subscription.action(), method);

@@ -25,6 +25,8 @@ public class JedisBuilder {
 
     private String channel;
 
+    private boolean automaticallyPrintExceptions = true;
+
     public JedisBuilder withSettings(JedisSettings settings) {
         this.settings = settings;
         return this;
@@ -57,12 +59,23 @@ public class JedisBuilder {
         return this;
     }
 
+    public JedisBuilder automaticallyPostExceptions() {
+        this.automaticallyPrintExceptions = true;
+        return this;
+    }
+
+    public JedisBuilder whileNotPostingExceptions() {
+        this.automaticallyPrintExceptions = false;
+        return this;
+    }
+
     @SneakyThrows
     public JedisManager build() {
         if (this.settings == null) {
-            throw new RuntimeException("Jedis settings is null");
+            throw new UnsupportedOperationException("Cannot instantiate a new JedisManager with no settings provided");
         }
 
-        return new JedisManager(this.channel == null ? "jedis" : this.channel, this.settings, this.handlers == null ? null : this.handlers);
+        return new JedisManager(this.channel == null ? "jedis" : this.channel, this.settings,
+                this.handlers == null ? null : this.handlers, this.automaticallyPrintExceptions);
     }
 }

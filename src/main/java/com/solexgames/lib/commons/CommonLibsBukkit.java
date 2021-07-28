@@ -45,7 +45,6 @@ public final class CommonLibsBukkit extends ExtendedJavaPlugin {
         this.saveDefaultConfig();
         this.loadCommonsServices();
         this.loadCommonsHolograms();
-//        this.loadCommonsNpcs();
         this.loadCommonsCommands();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -80,8 +79,12 @@ public final class CommonLibsBukkit extends ExtendedJavaPlugin {
 
     @Override
     public void disable() {
-        JedisManager.INSTANCES.stream().filter(Objects::nonNull)
-                .forEach(JedisManager::disconnect);
+        JedisManager.INSTANCES.stream()
+                .filter(Objects::nonNull)
+                .forEach(jedisManager -> {
+                    jedisManager.getCollectedExceptions().forEach(Exception::printStackTrace);
+                    jedisManager.disconnect();
+                });
 
         this.hologramManager.saveAllSync();
     }
