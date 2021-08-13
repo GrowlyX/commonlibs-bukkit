@@ -32,6 +32,16 @@ public class JedisBuilder {
         return this;
     }
 
+    public JedisBuilder withHandler(JedisHandler handler) {
+        if (this.handlers == null) {
+            this.handlers = Collections.singletonList(handler);
+        } else {
+            this.handlers.add(handler);
+        }
+
+        return this;
+    }
+
     public JedisBuilder withHandlers(JedisHandler handler) {
         if (this.handlers == null) {
             this.handlers = Collections.singletonList(handler);

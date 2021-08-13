@@ -29,14 +29,15 @@ public class AcfCommandProcessor extends PaperCommandManager {
         this.enableUnstableAPI("help");
 
         this.getCommandContexts().registerContext(CommonsPlayer.class, context -> {
-            final String username = context.getFirstArg().replace(":confirm", "");
+            final String nameRaw = context.popFirstArg();
+            final String username = nameRaw.replace(":confirm", "");
             final Player bukkitPlayer = Bukkit.getPlayer(username);
 
-            if (bukkitPlayer.hasMetadata("vanished")) {
+            if (bukkitPlayer != null && bukkitPlayer.hasMetadata("vanished")) {
                 if (!context.getSender().hasPermission("scandium.staff")) {
                     throw new ConditionFailedException("No player matching " + ChatColor.YELLOW + username + ChatColor.RED + " is online.");
                 } else {
-                    if (!context.getFirstArg().endsWith(":confirm")) {
+                    if (!nameRaw.endsWith(":confirm")) {
                         throw new ConditionFailedException("That player's vanished, please add :confirm to the end of the user's name to confirm this action.");
                     }
                 }

@@ -31,7 +31,9 @@ public class JedisSubscription extends JedisPubSub {
 
             if (method != null) {
                 try {
-                    method.invoke(this.jedisManager.getJedisHandlers().get(0) /* temporary */, jsonAppender);
+                    if (jsonAppender != null) {
+                        method.invoke(this.jedisManager.getJedisHandlers().get(0) /* temporary */, jsonAppender);
+                    }
                 } catch (Exception exception) {
                     if (this.jedisManager.isPostExceptions()) {
                         exception.printStackTrace();

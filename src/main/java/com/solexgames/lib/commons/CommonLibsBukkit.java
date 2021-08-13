@@ -11,6 +11,7 @@ import com.solexgames.lib.commons.manager.NPCManager;
 import com.solexgames.lib.commons.processor.AcfCommandProcessor;
 import com.solexgames.lib.commons.redis.JedisManager;
 import lombok.Getter;
+import me.lucko.helper.Commands;
 import me.lucko.helper.Helper;
 import me.lucko.helper.hologram.BukkitHologramFactory;
 import me.lucko.helper.hologram.HologramFactory;
@@ -18,10 +19,12 @@ import me.lucko.helper.messaging.bungee.BungeeCord;
 import me.lucko.helper.messaging.bungee.BungeeCordImpl;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.plugin.HelperPlugin;
+import me.lucko.helper.promise.Promise;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Getter
@@ -58,7 +61,6 @@ public final class CommonLibsBukkit extends ExtendedJavaPlugin {
     private void loadCommonsCommands() {
         final AcfCommandProcessor acfCommandProcessor = new AcfCommandProcessor(this);
 
-        acfCommandProcessor.enableUnstableAPI("help");
         acfCommandProcessor.registerCommand(new CommonLibsCommand());
         acfCommandProcessor.registerCommand(new HologramCommand());
     }
@@ -82,7 +84,9 @@ public final class CommonLibsBukkit extends ExtendedJavaPlugin {
         JedisManager.INSTANCES.stream()
                 .filter(Objects::nonNull)
                 .forEach(jedisManager -> {
-                    jedisManager.getCollectedExceptions().forEach(Exception::printStackTrace);
+                    jedisManager.getCollectedExceptions()
+                            .forEach(Exception::printStackTrace);
+
                     jedisManager.disconnect();
                 });
 

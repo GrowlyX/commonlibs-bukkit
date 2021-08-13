@@ -198,7 +198,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>LATEST</version>
+            <version>3.12.9</version>
         </dependency>
         <dependency>
             <groupId>co.aikar</groupId>
@@ -213,7 +213,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>LATEST</version>
+            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
